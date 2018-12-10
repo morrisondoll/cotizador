@@ -2,25 +2,49 @@ import React, { Component } from 'react';
 
 import Header from './Header';
 import Formulario from './Formulario';
-import {obtenerDiferenciaAnio, calcularMarca} from "../helper";
+import {obtenerDiferenciaAnio, calcularMarca, obtenerPlan} from "../helper";
+import Resumen from './Resumen';
+import Resultado from './Resultado';
 
 class App extends Component {
 
-   cotizarSeguro = (datos) => {
-      // console.log(datos);
-      //El nombre en const debe ser exactamente igual que el nombre en el objeto enviado
-      const {marca, anio, plan} = datos;
-      //Agregar la base del seguro
-      let resultado = 2000;
-      //Agregar el porcentaje anual y obtener diferencia de años
-      const diferencia = obtenerDiferenciaAnio(anio);
-      resultado -= ((diferencia*3)*resultado)/100;
+  state = {
+    resultado : '',
+    datos: {}
+  }
 
-      //Agregar diferencias regionales
-      resultado = calcularMarca(marca) * resultado;
+  cotizarSeguro = (datos) => {
+    // console.log(datos);
+    //El nombre en const debe ser exactamente igual que el nombre en el objeto enviado
+    const {marca, anio, plan} = datos;
+    //Agregar la base del seguro
+    let resultado = 2000;
+    //Agregar el porcentaje anual y obtener diferencia de años
+    const diferencia = obtenerDiferenciaAnio(anio);
+    resultado -= ((diferencia*3)*resultado)/100;
 
-      console.log(resultado);
-   } 
+    //Agregar diferencias regionales
+    resultado = calcularMarca(marca) * resultado;
+
+    //Agregar valor del plan
+    let incrementoPlan = obtenerPlan(plan);
+
+    //Costo total con formato
+    resultado = parseFloat(incrementoPlan * resultado).toFixed(2);
+    // console.log(resultado);
+
+    //Crear objeto para el resumen
+    const datosAuto = {
+      marca: marca,
+      plan: plan,
+      anio: anio
+    };
+
+    this.setState({
+      resultado: resultado,
+      datos: datosAuto
+    });
+  } 
 
   render() {
     return (
@@ -32,6 +56,19 @@ class App extends Component {
         <div className="bit-col-100 bg-grey flex justify-center">
           <Formulario 
             cotizarSeguro = {this.cotizarSeguro}
+          />
+        </div>
+
+        <div className="bit-col-100 bg-grey flex justify-center">
+          <Resumen
+            datos = {this.state.datos}
+            resultado = {this.state.resultado}
+          />
+        </div>
+
+        <div className="bit-col-100 bg-grey flex justify-center">
+          <Resultado
+            resultado={this.state.resultado}
           />
         </div>
       </div>

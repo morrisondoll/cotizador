@@ -34,7 +34,7 @@ class Formulario extends Component {
     this.props.cotizarSeguro(infoAuto);
 
     //Reiniciar el formulario
-    e.currentTarget.reset();
+    // e.currentTarget.reset();
     console.log("Enviado!!");
   }
 
